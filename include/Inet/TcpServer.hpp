@@ -10,22 +10,20 @@
 
 class TcpServer {
 public:
-    TcpServer(const InetAddress& inet): m_socket(Socket::createTcpSocket(inet.getSockAddr()->sa_family)),
+    TcpServer(const InetAddress& inet): m_socket(inet),
                                   m_inetAddress(inet) {
-        m_socket.bindAddress(m_inetAddress);
+        m_socket.bindAddress();
     }
 
     void run() {
         m_socket.listen();
 
-        char buf[1024];
-        int bytes_read;
+        std::string buf;
 
         while(1) {
-            auto sock = m_socket.accept(m_inetAddress);
+            auto sock = m_socket.accept();
             while (1) {
-                bytes_read = recv(sock, buf, 1024, 0);
-                if (bytes_read <= 0) break;
+                if(m_socket.recv(buf) <= 0) break;
                 std::cout << buf;
             }
         }

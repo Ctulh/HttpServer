@@ -6,7 +6,8 @@ set(HEADERS ${INCLUDE_DIR}/InetAddress.hpp
             ${INCLUDE_DIR}/Socket.hpp
             ${INCLUDE_DIR}/TcpServer.hpp)
 
-set(SOURCES InetAddress.cpp)
+set(SOURCES InetAddress.cpp
+            Socket.cpp)
 
 add_library(${LIB_NAME} ${HEADERS} ${SOURCES})
 
