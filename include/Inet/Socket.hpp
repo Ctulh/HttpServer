@@ -16,7 +16,7 @@ public:
                           SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC,
                           IPPROTO_TCP);
     }
-    virtual ~Socket();fix
+    virtual ~Socket();
 
 public:
     bool bindAddress();
