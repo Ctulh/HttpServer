@@ -1,8 +1,14 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 #include "Inet/TcpServer.hpp"
+#include <thread>
 
 namespace po = boost::program_options;
+
+std::string print(std::string const& msg) {
+    std::cout << msg;
+    return msg;
+}
 
 int main(int argc, char** argv) {
     po::options_description desc("Allowed options");
@@ -31,8 +37,15 @@ int main(int argc, char** argv) {
         std::cout << vm["port"].as<std::string>() << '\n';
     }
 
-    TcpServer tcpServer({"127.0.0.1", 8888});
-    tcpServer.run();
+    TcpServer tcpServer({"127.0.0.1", 8885}, print);
 
+    std::thread t1([&tcpServer](){
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        tcpServer.stop();
+    });
+    t1.detach();
+
+    tcpServer.run();
+    std::cout << "END";
     return 0;
 }

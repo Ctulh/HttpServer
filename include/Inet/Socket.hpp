@@ -12,9 +12,9 @@ public:
     explicit Socket(const InetAddress& inetAddress):
                                                      m_inetAddress(inetAddress)
     {
-        m_socketFd = socket(m_inetAddress.getSockAddr()->sa_family,
-                          SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC,
-                          IPPROTO_TCP);
+        m_socketFd = socket(AF_INET,
+                          SOCK_STREAM | SOCK_NONBLOCK,
+                          0);
     }
     virtual ~Socket();
 
