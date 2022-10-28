@@ -6,29 +6,33 @@
 
 #include "InetAddress.hpp"
 
+enum SOCK_TYPE {
+    TCP = 1,
+    UDP = 2
+};
 
 class Socket {
 public:
-    explicit Socket(const InetAddress& inetAddress):
+    explicit Socket(const InetAddress& inetAddress, SOCK_TYPE sockType):
                                                      m_inetAddress(inetAddress)
     {
         m_socketFd = socket(AF_INET,
-                          SOCK_STREAM | SOCK_NONBLOCK,
+                            ((sockType == TCP) ? SOCK_STREAM : SOCK_DGRAM) | SOCK_NONBLOCK | SOCK_CLOEXEC,
                           0);
     }
     virtual ~Socket();
 
 public:
-    bool bindAddress();
+    bool bind();
     bool listen();
     int accept();
 
-    bool send(std::string_view) const;
+    int read(char* buf, int len) const;
+    int fd() const;
+
     bool connect();
-    int recv(std::string&) const;
 
 private:
-    int m_acceptFd;
     int m_socketFd;
     InetAddress m_inetAddress;
 };

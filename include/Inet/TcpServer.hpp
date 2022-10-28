@@ -13,9 +13,9 @@
 
 class TcpServer {
 public:
-    TcpServer(const InetAddress& inet, std::function<std::string(std::string const&)> const& callback): m_socket(inet),
+    TcpServer(const InetAddress& inet, std::function<std::string(std::string const&)> const& callback): m_socket(inet, SOCK_TYPE::TCP),
                                   m_inetAddress(inet), m_callback(callback) {
-        if(!m_socket.bindAddress())
+        if(!m_socket.bind())
             std::cout << "ERROR BINDING" << '\n';
     }
 
@@ -24,15 +24,19 @@ public:
         if(!m_socket.listen())
             std::cout << "ERROR LISTENING" << '\n';
 
-        std::string buf;
+        char buf[1024];
         std::string message;
 
         while(m_isRunning.test()) {
             if(!m_socket.accept())
                 std::cout << "ERROR ACCEPTING" << '\n';
             while (1) {
-                if(m_socket.recv(buf) <= 0) break;
-                m_socket.send(m_callback(buf));
+                if(m_socket.read(buf, 1024) <= 0) break;
+                message+=buf;
+            }
+            if(!message.empty()) {
+
+                message.clear();
             }
         }
     }

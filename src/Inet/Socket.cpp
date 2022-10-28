@@ -5,20 +5,13 @@
 #include "Socket.hpp"
 #include <string>
 
-
-namespace {
-    constinit int MAXRECV = 1024;
-}
-
 Socket::~Socket() {
     shutdown(m_socketFd, 2);
 }
 
 int Socket::accept() {
     socklen_t addrLength = sizeof(sockaddr_in);
-    m_acceptFd = ::accept ( m_socketFd, (sockaddr*)m_inetAddress.getSockAddr(), &addrLength);
-
-    return m_acceptFd;
+    return ::accept ( m_socketFd, (sockaddr*)m_inetAddress.getSockAddr(), &addrLength);
 }
 
 bool Socket::listen() {
@@ -29,31 +22,12 @@ bool Socket::listen() {
     return true;
 }
 
-bool Socket::bindAddress() {
+bool Socket::bind() {
     int bind_return = ::bind(m_socketFd, (sockaddr*)m_inetAddress.getSockAddr(), sizeof(sockaddr));
     if(bind_return == -1) {
         return false;
     }
     return true;
-}
-
-int Socket::recv(std::string& output) const {
-    char buf[::MAXRECV + 1];
-
-    int status = ::recv ( m_acceptFd, buf, MAXRECV, 0 );
-
-    output = buf;
-    return status;
-}
-
-bool Socket::send(std::string_view msg) const {
-    int status = ::send ( m_socketFd, msg.data(), msg.size(), MSG_NOSIGNAL );
-    if ( status == -1 ) {
-        return false;
-    }
-    else {
-        return true;
-    }
 }
 
 bool Socket::connect() {
@@ -64,4 +38,8 @@ bool Socket::connect() {
         return true;
     else
         return false;
+}
+
+int Socket::fd() const {
+    return m_socketFd;
 }

@@ -2,7 +2,7 @@
 #include <boost/program_options.hpp>
 #include "Inet/TcpServer.hpp"
 #include <thread>
-
+#include "ConnectionAcceptor.hpp"
 namespace po = boost::program_options;
 
 std::string print(std::string const& msg) {
@@ -37,15 +37,36 @@ int main(int argc, char** argv) {
         std::cout << vm["port"].as<std::string>() << '\n';
     }
 
-    TcpServer tcpServer({"127.0.0.1", 8885}, print);
+    //TcpServer tcpServer({"127.0.0.1", 8888}, print);
 
-    std::thread t1([&tcpServer](){
-        std::this_thread::sleep_for(std::chrono::seconds(5));
-        tcpServer.stop();
+    //std::thread t1([&tcpServer](){
+    //    std::this_thread::sleep_for(std::chrono::seconds(60));
+    //    tcpServer.stop();
+    //});
+    //t1.detach();
+
+    //tcpServer.run();
+
+    int totalConnections = 0;
+
+    ConnectionAcceptor acceptor({"127.0.0.1", 8888});
+    acceptor.setReceiveConnectionCallback([&totalConnections](int){
+        printf("new connection'\n");
+        totalConnections++;
     });
-    t1.detach();
 
-    tcpServer.run();
+    std::thread t2([&totalConnections, &acceptor]() {
+        while(true) {
+            if (totalConnections == 3) {
+                acceptor.stop();
+            }
+        }
+    });
+
+    t2.detach();
+
+    acceptor.run();
+
     std::cout << "END";
     return 0;
 }
