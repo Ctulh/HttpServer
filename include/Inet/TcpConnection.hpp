@@ -13,6 +13,7 @@
 class TcpConnection {
 public:
     TcpConnection(InetAddress const& inetAddress);
+    TcpConnection(int fd);
 public:
     void send(const char* msg, std::size_t len);
     void recv(std::string& msg);

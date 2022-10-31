@@ -5,6 +5,7 @@
 #pragma once
 
 #include "InetAddress.hpp"
+#include <memory>
 
 enum SOCK_TYPE {
     TCP = 1,
@@ -13,9 +14,13 @@ enum SOCK_TYPE {
 
 class Socket {
 public:
-    explicit Socket(const InetAddress& inetAddress, SOCK_TYPE sockType):
-                                                     m_inetAddress(inetAddress)
+    explicit Socket(int fd) {
+        m_socketFd = fd;
+    }
+
+    explicit Socket(const InetAddress& inetAddress, SOCK_TYPE sockType)
     {
+        m_inetAddress = std::make_unique<InetAddress>(inetAddress);
         m_socketFd = socket(AF_INET,
                             ((sockType == TCP) ? SOCK_STREAM : SOCK_DGRAM) | SOCK_NONBLOCK | SOCK_CLOEXEC,
                           0);
@@ -34,5 +39,5 @@ public:
 
 private:
     int m_socketFd;
-    InetAddress m_inetAddress;
+    std::unique_ptr<InetAddress> m_inetAddress;
 };

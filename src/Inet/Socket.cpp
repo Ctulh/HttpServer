@@ -11,7 +11,7 @@ Socket::~Socket() {
 
 int Socket::accept() {
     socklen_t addrLength = sizeof(sockaddr_in);
-    return ::accept ( m_socketFd, (sockaddr*)m_inetAddress.getSockAddr(), &addrLength);
+    return ::accept ( m_socketFd, (sockaddr*)m_inetAddress->getSockAddr(), &addrLength);
 }
 
 bool Socket::listen() {
@@ -23,7 +23,7 @@ bool Socket::listen() {
 }
 
 bool Socket::bind() {
-    int bind_return = ::bind(m_socketFd, (sockaddr*)m_inetAddress.getSockAddr(), sizeof(sockaddr));
+    int bind_return = ::bind(m_socketFd, (sockaddr*)m_inetAddress->getSockAddr(), sizeof(sockaddr));
     if(bind_return == -1) {
         return false;
     }
@@ -32,7 +32,7 @@ bool Socket::bind() {
 
 bool Socket::connect() {
     int status;
-    status = ::connect(m_socketFd, m_inetAddress.getSockAddr(), sizeof (*m_inetAddress.getSockAddr()));
+    status = ::connect(m_socketFd, m_inetAddress->getSockAddr(), sizeof (*m_inetAddress->getSockAddr()));
 
     if ( status == 0 )
         return true;
@@ -42,4 +42,8 @@ bool Socket::connect() {
 
 int Socket::fd() const {
     return m_socketFd;
+}
+
+int Socket::read(char *buf, int len) const {
+    return ::recv(m_socketFd, buf, len, 0);
 }
