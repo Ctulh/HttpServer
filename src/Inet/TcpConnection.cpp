@@ -24,3 +24,7 @@ void TcpConnection::recv(std::string &msg) {
         msg+=buf;
     }
 }
+
+int TcpConnection::fd() const {
+    return m_socket->fd();
+}

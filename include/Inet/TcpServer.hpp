@@ -27,11 +27,14 @@ public:
         std::thread t1 ([this](){m_connectionAcceptor->run();});
         t1.detach();
 
-        char buf[1024];
-        std::string message;
-
         while(m_isRunning.test()) {
-
+            if(m_connection) {
+                char buf[1024];
+                auto result = ::recv(m_connection->fd(), buf, 1024,0);
+                if (result > 0) {
+                    receiveMessageCallback({buf, 1024}); // todo move from tcpServer to PollDispatcher or something
+                }
+            }
         }
     }
 
@@ -40,13 +43,17 @@ public:
         m_connectionAcceptor->stop();
     }
 private:
-    void acceptConnectionCallback(int fd) {
+    void acceptConnectionCallback(int fd) { //TODO close connection callback
         m_connection = std::make_unique<TcpConnection>(fd);
         if(m_connection) {
-            char msg[] = "Hi, im the server";
-            m_connection->send(msg, sizeof(msg));
+            std::cout << "Got new connection: " << fd << '\n';
         }
     }
+    void receiveMessageCallback(std::string const& message) {
+        if(m_connection)
+            m_connection->send(message.c_str(), message.size());
+    }
+
 
 private:
     std::atomic_flag m_isRunning;

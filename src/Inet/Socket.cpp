@@ -36,8 +36,7 @@ bool Socket::connect() {
 
     if ( status == 0 )
         return true;
-    else
-        return false;
+    return false;
 }
 
 int Socket::fd() const {

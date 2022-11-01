@@ -18,6 +18,7 @@ public:
     void send(const char* msg, std::size_t len);
     void recv(std::string& msg);
 
+    int fd() const;
     void shutdown();
 public:
 private:
