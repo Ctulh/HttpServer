@@ -7,11 +7,15 @@
 #include "InetAddress.hpp"
 #include "TcpConnection.hpp"
 #include "ConnectionAcceptor.hpp"
+#include "SocketReader.hpp"
 
 #include <iostream>
 #include <atomic>
 #include <functional>
 #include <thread>
+#include <set>
+
+using ConnectionPtr = std::unique_ptr<TcpConnection>;
 
 class TcpServer {
 public:
@@ -28,13 +32,20 @@ public:
         t1.detach();
 
         while(m_isRunning.test()) {
-            if(m_connection) {
-                char buf[1024];
-                auto result = ::recv(m_connection->fd(), buf, 1024,0);
-                if (result > 0) {
-                    receiveMessageCallback({buf, 1024}); // todo move from tcpServer to PollDispatcher or something
+            if(m_connections.empty())
+                continue;
+            for(auto& connection: m_connections) {
+                SocketReader socketReader;
+                auto status = socketReader.read(connection->fd());
+                if(status == STATUS::GOT_MESSAGE) {
+                    auto message = socketReader.getBuffer();
+                    receiveMessageCallback(connection, message);
+                } // TODO POLLER
+                else if(status == STATUS::CONNECTION_CLOSED) {
+                    connectionClosed(connection);
                 }
             }
+            //TODO callback after range based loop for remove SIGSEGv
         }
     }
 
@@ -43,22 +54,25 @@ public:
         m_connectionAcceptor->stop();
     }
 private:
+    void connectionClosed(ConnectionPtr const& connection) {
+        std::cout << "Close connection: " << connection->fd() << '\n';
+        m_connections.erase(connection);
+    }
     void acceptConnectionCallback(int fd) { //TODO close connection callback
-        m_connection = std::make_unique<TcpConnection>(fd);
-        if(m_connection) {
+        auto newConnection = std::make_unique<TcpConnection>(fd);
+        if(newConnection) {
             std::cout << "Got new connection: " << fd << '\n';
         }
+        m_connections.insert(std::move(newConnection));
     }
-    void receiveMessageCallback(std::string const& message) {
-        if(m_connection)
-            m_connection->send(message.c_str(), message.size());
+    void receiveMessageCallback(ConnectionPtr const& connection,std::string const& message) {
+        connection->send(message.c_str(), message.size());
     }
-
 
 private:
     std::atomic_flag m_isRunning;
     std::unique_ptr<ConnectionAcceptor> m_connectionAcceptor;
-    std::unique_ptr<TcpConnection> m_connection;
+    std::set<ConnectionPtr> m_connections;
     InetAddress m_inetAddress;
     std::function<std::string(std::string const&)> m_callback;
 };

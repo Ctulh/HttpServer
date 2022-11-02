@@ -32,7 +32,6 @@ public:
     bool listen();
     int accept();
 
-    int read(char* buf, int len) const;
     int fd() const;
 
     bool connect();

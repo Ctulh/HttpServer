@@ -18,13 +18,6 @@ TcpConnection::TcpConnection(const InetAddress &inetAddress) {
     m_socket = std::make_unique<Socket>(inetAddress, SOCK_TYPE::TCP);
 }
 
-void TcpConnection::recv(std::string &msg) {
-    char buf[1024];
-    while(m_socket->read(buf, 1024) > 0) {
-        msg+=buf;
-    }
-}
-
 int TcpConnection::fd() const {
     return m_socket->fd();
 }

@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
     TcpServer tcpServer({"127.0.0.1", 8887}, print);
 
     std::thread t1([&tcpServer](){
-        std::this_thread::sleep_for(std::chrono::seconds(20));
+        std::this_thread::sleep_for(std::chrono::seconds(120));
         tcpServer.stop();
     });
     t1.detach();

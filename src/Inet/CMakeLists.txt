@@ -12,7 +12,8 @@ set(HEADERS ${INCLUDE_DIR}/InetAddress.hpp
 set(SOURCES InetAddress.cpp
             Socket.cpp
             TcpConnection.cpp
-            ConnectionAcceptor.cpp)
+            ConnectionAcceptor.cpp
+            SocketReader.cpp)
 
 add_library(${LIB_NAME} ${HEADERS} ${SOURCES})
 

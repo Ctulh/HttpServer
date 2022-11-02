@@ -42,7 +42,3 @@ bool Socket::connect() {
 int Socket::fd() const {
     return m_socketFd;
 }
-
-int Socket::read(char *buf, int len) const {
-    return ::recv(m_socketFd, buf, len, 0);
-}
