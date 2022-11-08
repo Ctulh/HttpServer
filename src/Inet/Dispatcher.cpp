@@ -7,7 +7,8 @@
 #include "Generator.hpp"
 #include <iostream>
 
-Dispatcher::Dispatcher(TcpConnectionPtr const& connection): m_connection(connection) {}
+Dispatcher::Dispatcher(TcpConnectionPtr const& connection): m_connection(connection) {
+}
 
 void Dispatcher::setCloseConnectionCallback(CloseConnectionCallback const& closeConnectionCallback) {
     m_closeConnectionCallback = closeConnectionCallback;
@@ -39,4 +40,19 @@ Generator<int> Dispatcher::pollEvents() {
         }
         co_yield static_cast<int>(result);
     }
+}
+
+Generator<int>& Dispatcher::getGenerator() {
+    if(!m_generator) {
+        m_generator = std::make_unique<Generator<int>>(pollEvents());
+    }
+    return *m_generator;
+}
+
+bool Dispatcher::operator<(Dispatcher const& r) {
+    return m_connection < r.m_connection;
+}
+
+const TcpConnectionPtr &Dispatcher::getConnectionPtr() const {
+    return m_connection;
 }

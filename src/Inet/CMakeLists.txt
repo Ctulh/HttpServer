@@ -11,14 +11,16 @@ set(HEADERS ${INCLUDE_DIR}/InetAddress.hpp
             ${INCLUDE_DIR}/TcpConnection.hpp
             ${INCLUDE_DIR}/ConnectionAcceptor.hpp
             ${INCLUDE_DIR}/callbacks.hpp
-            ${INCLUDE_DIR}/Dispatcher.hpp)
+            ${INCLUDE_DIR}/Dispatcher.hpp
+            ${INCLUDE_DIR}/DispatchersPool.hpp)
 
 set(SOURCES InetAddress.cpp
             Socket.cpp
             TcpConnection.cpp
             ConnectionAcceptor.cpp
             SocketReader.cpp
-            Dispatcher.cpp)
+            Dispatcher.cpp
+            DispatchersPool.cpp)
 
 add_library(${LIB_NAME} ${HEADERS} ${SOURCES})
 

@@ -13,10 +13,14 @@ public:
     class promise_type;
     using handle_type = std::coroutine_handle<promise_type>;
 public:
-    Generator(handle_type h): m_handle(h) {}
+    explicit Generator(handle_type h): m_handle(h) {}
+    Generator(Generator& generator): m_handle(generator.m_handle), m_value(generator.m_value) {}
     Generator(Generator&& generator) noexcept: m_handle(std::move(generator.m_handle)), m_value(generator.m_value) {
     }
-    ~Generator() {m_handle.destroy();}
+    ~Generator() {
+        if(m_handle.done())
+            m_handle.destroy();
+    }
 
 public:
     class promise_type {

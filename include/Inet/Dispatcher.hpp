@@ -17,10 +17,20 @@ public:
     void setReceiveMessageCallback(ReceiveMessageCallback const&);
     void setCloseConnectionCallback(CloseConnectionCallback const&);
     void setSendMessageCallback(SendMessageCallback const&);
-    Generator<int> pollEvents();
+
+public:
+    Generator<int>& getGenerator();
+    TcpConnectionPtr const& getConnectionPtr() const;
+    bool operator<(Dispatcher const& r);
+
 private:
-    TcpConnectionPtr const& m_connection;
+    Generator<int> pollEvents();
+
+private:
     SendMessageCallback m_sendMessageCallback;
     ReceiveMessageCallback m_receiveMessageCallback;
     CloseConnectionCallback m_closeConnectionCallback;
+
+    std::unique_ptr<Generator<int>> m_generator;
+    TcpConnectionPtr const& m_connection;
 };

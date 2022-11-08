@@ -8,7 +8,7 @@
 #include "TcpConnection.hpp"
 #include "ConnectionAcceptor.hpp"
 #include "SocketReader.hpp"
-#include "Dispatcher.hpp"
+#include "DispatchersPool.hpp"
 #include "Generator.hpp"
 #include "callbacks.hpp"
 
@@ -24,6 +24,7 @@ public:
                                   m_inetAddress(inet), m_callback(callback) {
         m_connectionAcceptor = std::make_unique<ConnectionAcceptor>(m_inetAddress);
         m_connectionAcceptor->setReceiveConnectionCallback(std::bind(&TcpServer::acceptConnectionCallback, this, std::placeholders::_1));
+        m_dispatcherPool = std::make_unique<DispatchersPool>();
     }
 
     void run() {
@@ -36,11 +37,7 @@ public:
             if(m_connections.empty())
                 continue;
 
-            if(m_dispatcher) {
-                auto generator = m_dispatcher->pollEvents();
-                generator.next();
-                generator.getValue();
-            }
+            m_dispatcherPool->poll();
 
             //TODO callback after range based loop for remove SIGSEGv
         }
@@ -55,17 +52,25 @@ private:
         std::cout << "Close connection: " << connection->fd() << '\n';
         connection->shutdown();
         m_connections.erase(connection);
+        m_dispatcherPool->remove(connection);
     }
     void acceptConnectionCallback(int fd) { //TODO close connection callback
         auto newConnection = std::make_unique<TcpConnection>(fd);
         if(newConnection) {
             std::cout << "Got new connection: " << fd << '\n';
         }
-        m_connections.insert(std::move(newConnection));
-        m_dispatcher = std::make_unique<Dispatcher>(*m_connections.begin());
-        m_dispatcher->setReceiveMessageCallback(std::bind(&TcpServer::receiveMessageCallback, this, std::placeholders::_1, std::placeholders::_2));
-        m_dispatcher->setCloseConnectionCallback(std::bind(&TcpServer::connectionClosed, this, std::placeholders::_1));
-        m_pollers.push_back(std::move(m_dispatcher->pollEvents()));
+
+        auto insertPos = m_connections.insert(m_connections.end(), std::move(newConnection));
+
+        auto dispatcher = Dispatcher(*insertPos);
+        dispatcher.setReceiveMessageCallback([this](TcpConnectionPtr const& connection, SocketReader* socketReader) {
+            this->receiveMessageCallback(connection, socketReader);
+        });
+        dispatcher.setCloseConnectionCallback([this](TcpConnectionPtr const& connection) {
+            this->connectionClosed(connection);
+        });
+
+        m_dispatcherPool->add(*insertPos, std::move(dispatcher));
     }
     void receiveMessageCallback(TcpConnectionPtr const& connection, SocketReader* socketReader) {
         //connection->send(message.c_str(), message.size());
@@ -77,9 +82,8 @@ private:
 private:
     std::atomic_flag m_isRunning;
     std::unique_ptr<ConnectionAcceptor> m_connectionAcceptor;
+    std::unique_ptr<DispatchersPool> m_dispatcherPool;
     std::set<TcpConnectionPtr> m_connections;
-    std::vector<Generator<int>> m_pollers;
-    std::unique_ptr<Dispatcher> m_dispatcher;
     InetAddress m_inetAddress;
     std::function<std::string(std::string const&)> m_callback;
 };
