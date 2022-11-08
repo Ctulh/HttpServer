@@ -11,7 +11,7 @@ namespace {
     constexpr int BUFFER_SIZE = 1024;
 }
 
-STATUS SocketReader::read(int fd) {
+READ_STATUS SocketReader::read(int fd) {
     int result;
     for(;;) {
         char buf[BUFFER_SIZE];
@@ -42,6 +42,5 @@ std::string SocketReader::getBuffer() {
 }
 
 void SocketReader::clear() {
-    m_status = ::NONE;
     m_buffer.clear();
 }

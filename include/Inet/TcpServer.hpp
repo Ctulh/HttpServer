@@ -8,14 +8,15 @@
 #include "TcpConnection.hpp"
 #include "ConnectionAcceptor.hpp"
 #include "SocketReader.hpp"
+#include "Dispatcher.hpp"
+#include "Generator.hpp"
+#include "callbacks.hpp"
 
 #include <iostream>
 #include <atomic>
 #include <functional>
 #include <thread>
 #include <set>
-
-using ConnectionPtr = std::unique_ptr<TcpConnection>;
 
 class TcpServer {
 public:
@@ -34,17 +35,13 @@ public:
         while(m_isRunning.test()) {
             if(m_connections.empty())
                 continue;
-            for(auto& connection: m_connections) {
-                SocketReader socketReader;
-                auto status = socketReader.read(connection->fd());
-                if(status == STATUS::GOT_MESSAGE) {
-                    auto message = socketReader.getBuffer();
-                    receiveMessageCallback(connection, message);
-                } // TODO POLLER
-                else if(status == STATUS::CONNECTION_CLOSED) {
-                    connectionClosed(connection);
-                }
+
+            if(m_dispatcher) {
+                auto generator = m_dispatcher->pollEvents();
+                generator.next();
+                generator.getValue();
             }
+
             //TODO callback after range based loop for remove SIGSEGv
         }
     }
@@ -54,8 +51,9 @@ public:
         m_connectionAcceptor->stop();
     }
 private:
-    void connectionClosed(ConnectionPtr const& connection) {
+    void connectionClosed(TcpConnectionPtr const& connection) {
         std::cout << "Close connection: " << connection->fd() << '\n';
+        connection->shutdown();
         m_connections.erase(connection);
     }
     void acceptConnectionCallback(int fd) { //TODO close connection callback
@@ -64,15 +62,24 @@ private:
             std::cout << "Got new connection: " << fd << '\n';
         }
         m_connections.insert(std::move(newConnection));
+        m_dispatcher = std::make_unique<Dispatcher>(*m_connections.begin());
+        m_dispatcher->setReceiveMessageCallback(std::bind(&TcpServer::receiveMessageCallback, this, std::placeholders::_1, std::placeholders::_2));
+        m_dispatcher->setCloseConnectionCallback(std::bind(&TcpServer::connectionClosed, this, std::placeholders::_1));
+        m_pollers.push_back(std::move(m_dispatcher->pollEvents()));
     }
-    void receiveMessageCallback(ConnectionPtr const& connection,std::string const& message) {
+    void receiveMessageCallback(TcpConnectionPtr const& connection, SocketReader* socketReader) {
+        //connection->send(message.c_str(), message.size());
+        auto message = socketReader->getBuffer();
         connection->send(message.c_str(), message.size());
+        socketReader->clear();
     }
 
 private:
     std::atomic_flag m_isRunning;
     std::unique_ptr<ConnectionAcceptor> m_connectionAcceptor;
-    std::set<ConnectionPtr> m_connections;
+    std::set<TcpConnectionPtr> m_connections;
+    std::vector<Generator<int>> m_pollers;
+    std::unique_ptr<Dispatcher> m_dispatcher;
     InetAddress m_inetAddress;
     std::function<std::string(std::string const&)> m_callback;
 };

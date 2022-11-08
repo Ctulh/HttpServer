@@ -7,7 +7,7 @@
 #include <string>
 #include <future>
 
-enum STATUS {
+enum READ_STATUS {
     NONE,
     GOT_MESSAGE,
     EMPTY_MESSAGE,
@@ -16,10 +16,9 @@ enum STATUS {
 
 class SocketReader {
 public:
-    STATUS read(int fd);
+    READ_STATUS read(int fd);
     std::string getBuffer();
     void clear();
 private:
     std::string m_buffer;
-    STATUS m_status;
 };

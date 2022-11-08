@@ -34,11 +34,22 @@ bool Socket::connect() {
     int status;
     status = ::connect(m_socketFd, m_inetAddress->getSockAddr(), sizeof (*m_inetAddress->getSockAddr()));
 
-    if ( status == 0 )
+    if ( status == 0 ) {
+        m_isConnected = true;
         return true;
+    }
     return false;
 }
 
 int Socket::fd() const {
     return m_socketFd;
+}
+
+bool Socket::isConnected() const {
+    return m_isConnected;
+}
+
+void Socket::shutDown() {
+    shutdown(m_socketFd, 2);
+    m_isConnected = false;
 }

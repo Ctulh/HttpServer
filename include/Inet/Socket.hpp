@@ -35,8 +35,11 @@ public:
     int fd() const;
 
     bool connect();
+    bool isConnected() const;
 
+    void shutDown();
 private:
+    bool m_isConnected;
     int m_socketFd;
     std::unique_ptr<InetAddress> m_inetAddress;
 };

@@ -7,6 +7,7 @@
 
 TcpConnection::TcpConnection(int fd) {
     m_socket = std::make_unique<Socket>(fd);
+    m_connected = true;
 }
 
 void TcpConnection::send(const char *msg, std::size_t len) {
@@ -20,4 +21,12 @@ TcpConnection::TcpConnection(const InetAddress &inetAddress) {
 
 int TcpConnection::fd() const {
     return m_socket->fd();
+}
+
+void TcpConnection::shutdown() {
+    m_socket->shutDown();
+}
+
+bool TcpConnection::isConnected() const {
+    return m_connected;
 }

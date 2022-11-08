@@ -20,7 +20,10 @@ public:
 
     int fd() const;
     void shutdown();
+
+    bool isConnected() const;
 public:
 private:
+    bool m_connected;
     std::unique_ptr<Socket> m_socket;
 };
