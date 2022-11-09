@@ -5,6 +5,10 @@
 #include "TcpConnection.hpp"
 #include <iostream>
 
+TcpConnection::~TcpConnection() {
+    shutdown();
+}
+
 TcpConnection::TcpConnection(int fd) {
     m_socket = std::make_unique<Socket>(fd);
     m_connected = true;

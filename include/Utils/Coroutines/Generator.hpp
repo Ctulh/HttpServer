@@ -6,6 +6,11 @@
 
 #include <coroutine>
 #include <utility>
+#include <iostream>
+#include <memory>
+
+
+
 
 template <typename T>
 class Generator {
@@ -13,14 +18,13 @@ public:
     class promise_type;
     using handle_type = std::coroutine_handle<promise_type>;
 public:
-    explicit Generator(handle_type h): m_handle(h) {}
+    explicit Generator(handle_type h): m_handle(new handle_type(h), [](auto p) {
+        p->destroy();
+    }) {}
     Generator(Generator& generator): m_handle(generator.m_handle), m_value(generator.m_value) {}
     Generator(Generator&& generator) noexcept: m_handle(std::move(generator.m_handle)), m_value(generator.m_value) {
     }
-    ~Generator() {
-        if(m_handle.done())
-            m_handle.destroy();
-    }
+    ~Generator() = default;
 
 public:
     class promise_type {
@@ -30,6 +34,8 @@ public:
         Generator get_return_object() {return Generator(handle_type::from_promise(*this));}
         void unhandled_exception() {}
         std::suspend_always yield_value(T const newValue) { value = newValue; return{};}
+        void return_value(T v) {
+            value = v;}
     public:
         T value;
     };
@@ -41,16 +47,16 @@ public:
 
 private:
     T m_value;
-    handle_type m_handle;
+    std::shared_ptr<handle_type> m_handle;
 };
 
 template <typename T>
 bool Generator<T>::next() {
-    m_handle.resume();
-    return not(m_handle.done());
+    m_handle->resume();
+    return not(m_handle->done());
 }
 
 template<typename T>
 T Generator<T>::getValue() {
-    return m_handle.promise().value;
+    return m_handle->promise().value;
 }

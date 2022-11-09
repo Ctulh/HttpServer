@@ -11,8 +11,9 @@ class TcpConnection;
 class SocketReader;
 
 using TcpConnectionPtr = std::unique_ptr<TcpConnection>;
+using SocketReaderPtr = std::shared_ptr<SocketReader>;
 
-using ReceiveMessageCallback = std::function<void(TcpConnectionPtr const&, SocketReader*)>;
+using ReceiveMessageCallback = std::function<void(TcpConnectionPtr const&, SocketReaderPtr)>;
 using SendMessageCallback = std::function<void(TcpConnectionPtr const&)>;
 using ReceiveConnectionCallback = std::function<void(int)>;
 using CloseConnectionCallback = std::function<void(TcpConnectionPtr const&)>;

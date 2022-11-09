@@ -8,6 +8,7 @@
 #include <iostream>
 
 Dispatcher::Dispatcher(TcpConnectionPtr const& connection): m_connection(connection) {
+    m_socketReader = std::make_shared<SocketReader>();
 }
 
 void Dispatcher::setCloseConnectionCallback(CloseConnectionCallback const& closeConnectionCallback) {
@@ -18,27 +19,31 @@ void Dispatcher::setReceiveMessageCallback(ReceiveMessageCallback const& receive
     m_receiveMessageCallback = receiveMessageCallback;
 }
 
+int Dispatcher::poll() {
+    if(!m_generator)
+        getGenerator();
+    m_generator->next();
+    auto result = m_generator->getValue();
+    switch (result) {
+        case READ_STATUS::GOT_MESSAGE: {
+            m_receiveMessageCallback(m_connection, m_socketReader);
+            return READ_STATUS::GOT_MESSAGE;
+        }
+        case READ_STATUS::CONNECTION_CLOSED: {
+            m_closeConnectionCallback(m_connection);
+            return READ_STATUS::CONNECTION_CLOSED;
+        }
+    }
+}
+
 void Dispatcher::setSendMessageCallback(SendMessageCallback const& sendMessageCallback) {
     m_sendMessageCallback = sendMessageCallback;
 }
 
 Generator<int> Dispatcher::pollEvents() {
-    SocketReader socketReader;
     while(m_connection->isConnected()) {
-        auto result = socketReader.read(m_connection->fd());
-        switch (result) {
-            case READ_STATUS::GOT_MESSAGE: {
-                m_receiveMessageCallback(m_connection, &socketReader);
-                break;
-            }
-            case READ_STATUS::CONNECTION_CLOSED: {
-                m_closeConnectionCallback(m_connection);
-                break;
-            }
-            default:
-                std::cout << "Unexpected status: ";
-        }
-        co_yield static_cast<int>(result);
+        auto result = m_socketReader->read(m_connection->fd());
+        co_yield result;
     }
 }
 

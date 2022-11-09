@@ -51,10 +51,10 @@ private:
     void connectionClosed(TcpConnectionPtr const& connection) {
         std::cout << "Close connection: " << connection->fd() << '\n';
         connection->shutdown();
-        m_connections.erase(connection);
         m_dispatcherPool->remove(connection);
+        m_connections.erase(connection);
     }
-    void acceptConnectionCallback(int fd) { //TODO close connection callback
+    void acceptConnectionCallback(int fd) {
         auto newConnection = std::make_unique<TcpConnection>(fd);
         if(newConnection) {
             std::cout << "Got new connection: " << fd << '\n';
@@ -62,18 +62,17 @@ private:
 
         auto insertPos = m_connections.insert(m_connections.end(), std::move(newConnection));
 
-        auto dispatcher = Dispatcher(*insertPos);
-        dispatcher.setReceiveMessageCallback([this](TcpConnectionPtr const& connection, SocketReader* socketReader) {
+        auto dispatcher = std::make_unique<Dispatcher>(*insertPos);
+        dispatcher->setReceiveMessageCallback([this](TcpConnectionPtr const& connection, SocketReaderPtr socketReader) {
             this->receiveMessageCallback(connection, socketReader);
         });
-        dispatcher.setCloseConnectionCallback([this](TcpConnectionPtr const& connection) {
+        dispatcher->setCloseConnectionCallback([this](TcpConnectionPtr const& connection) {
             this->connectionClosed(connection);
         });
 
         m_dispatcherPool->add(*insertPos, std::move(dispatcher));
     }
-    void receiveMessageCallback(TcpConnectionPtr const& connection, SocketReader* socketReader) {
-        //connection->send(message.c_str(), message.size());
+    void receiveMessageCallback(TcpConnectionPtr const& connection, SocketReaderPtr socketReader) {
         auto message = socketReader->getBuffer();
         connection->send(message.c_str(), message.size());
         socketReader->clear();

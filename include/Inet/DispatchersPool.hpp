@@ -15,7 +15,7 @@ class DispatchersPool {
 public:
     ~DispatchersPool();
 public:
-    void add(TcpConnectionPtr const&, Dispatcher&&);
+    void add(TcpConnectionPtr const&, std::unique_ptr<Dispatcher> dispatcher);
     void remove(TcpConnectionPtr const&);
     void poll();
 private:

@@ -11,7 +11,7 @@ enum READ_STATUS {
     NONE,
     GOT_MESSAGE,
     EMPTY_MESSAGE,
-    CONNECTION_CLOSED,
+    CONNECTION_CLOSED = -1,
 };
 
 class SocketReader {
