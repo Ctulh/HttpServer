@@ -22,3 +22,5 @@ public:
 private:
     std::string m_buffer;
 };
+
+using SocketReaderPtr = std::shared_ptr<SocketReader>;

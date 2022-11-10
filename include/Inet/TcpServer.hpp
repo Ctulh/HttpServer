@@ -18,6 +18,8 @@
 #include <thread>
 #include <set>
 
+
+template<typename Strategy>
 class TcpServer {
 public:
     TcpServer(const InetAddress& inet, std::function<std::string(std::string const&)> const& callback):
@@ -63,8 +65,8 @@ private:
         auto insertPos = m_connections.insert(m_connections.end(), std::move(newConnection));
 
         auto dispatcher = std::make_unique<Dispatcher>(*insertPos);
-        dispatcher->setReceiveMessageCallback([this](TcpConnectionPtr const& connection, SocketReaderPtr socketReader) {
-            this->receiveMessageCallback(connection, socketReader);
+        dispatcher->setReceiveMessageCallback([this](TcpConnectionPtr const& connection, SocketReaderPtr const socketReader) {
+            this->m_strategy.onReceiveMessage(connection, socketReader);
         });
         dispatcher->setCloseConnectionCallback([this](TcpConnectionPtr const& connection) {
             this->connectionClosed(connection);
@@ -72,13 +74,9 @@ private:
 
         m_dispatcherPool->add(*insertPos, std::move(dispatcher));
     }
-    void receiveMessageCallback(TcpConnectionPtr const& connection, SocketReaderPtr socketReader) {
-        auto message = socketReader->getBuffer();
-        connection->send(message.c_str(), message.size());
-        socketReader->clear();
-    }
 
 private:
+    Strategy m_strategy;
     std::atomic_flag m_isRunning;
     std::unique_ptr<ConnectionAcceptor> m_connectionAcceptor;
     std::unique_ptr<DispatchersPool> m_dispatcherPool;

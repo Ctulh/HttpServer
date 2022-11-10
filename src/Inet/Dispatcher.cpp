@@ -27,6 +27,7 @@ int Dispatcher::poll() {
     switch (result) {
         case READ_STATUS::GOT_MESSAGE: {
             m_receiveMessageCallback(m_connection, m_socketReader);
+            m_socketReader->clear();
             return READ_STATUS::GOT_MESSAGE;
         }
         case READ_STATUS::CONNECTION_CLOSED: {

@@ -3,6 +3,8 @@
 #include "Inet/TcpServer.hpp"
 #include <thread>
 #include "ConnectionAcceptor.hpp"
+#include "Strategy/EchoStrategy.hpp"
+
 namespace po = boost::program_options;
 
 std::string print(std::string const& msg) {
@@ -37,7 +39,7 @@ int main(int argc, char** argv) {
         std::cout << vm["port"].as<std::string>() << '\n';
     }
 
-    TcpServer tcpServer({"127.0.0.1", 8885}, print);
+    TcpServer<EchoStrategy> tcpServer({"127.0.0.1", 8885}, print);
 
     std::thread t1([&tcpServer](){
         std::this_thread::sleep_for(std::chrono::seconds(120));
