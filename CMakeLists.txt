@@ -17,4 +17,4 @@ message(${CONAN_INCLUDE_DIRS_BOOST})
 target_include_directories(${APPLICATION_NAME} PUBLIC ${CONAN_INCLUDE_DIRS_BOOST}
                                                       ${PROJECT_SOURCE_DIR}/include)
 
-target_link_libraries(${APPLICATION_NAME} PRIVATE ${CONAN_LIBS_BOOST} WebSocketLib InetLib)
+target_link_libraries(${APPLICATION_NAME} PRIVATE ${CONAN_LIBS_BOOST} InetLib)
