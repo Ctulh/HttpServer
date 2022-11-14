@@ -12,6 +12,8 @@ add_executable(${APPLICATION_NAME} app/main.cpp)
 
 add_subdirectory(src)
 
+add_subdirectory(tests)
+
 
 message(${CONAN_INCLUDE_DIRS_BOOST})
 target_include_directories(${APPLICATION_NAME} PUBLIC ${CONAN_INCLUDE_DIRS_BOOST}
