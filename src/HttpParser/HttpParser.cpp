@@ -7,23 +7,32 @@
 
 HttpParser::HttpParser(std::string_view message): m_message(message) {
 
+    std::string accumulator;
+    for(int i = 0; i < m_message.size() - 1; ++i) {
+        accumulator += m_message[i];
+        if(isDelimiter(m_message[i+1])) {
+            if (getMethodFromName(accumulator) != MESSAGE_METHOD::UNDEFINED) {
+                m_method = getMethodFromName(accumulator);
+                break;
+            }
+        }
+    }
 }
 
 
-MESSAGE_METHOD HttpParser::getMessageMethod() {
-    std::string accumulator;
-    for(int i = 0; i < m_message.size(); ++i) {
-        if(isDelimiter(m_message[i])) {
-            accumulator.clear();
-        }
+MESSAGE_TYPE HttpParser::getMessageType() const {
+    auto type = getMessageMethod();
+    if(type == UNDEFINED)
+        return MESSAGE_TYPE::RESPONSE;
+    return MESSAGE_TYPE::REQUEST;
+}
 
-        accumulator += m_message[i];
+std::string HttpParser::getMessage() const {
+    return m_message;
+}
 
-        if(getMethodFromName(accumulator) != MESSAGE_METHOD::UNDEFINED && isDelimiter(m_message[i+1])) {
-            return getMethodFromName(accumulator);
-        }
-    }
-    return MESSAGE_METHOD::UNDEFINED;
+MESSAGE_METHOD HttpParser::getMessageMethod() const {
+    return m_method;
 }
 
 MESSAGE_METHOD HttpParser::getMethodFromName(std::string_view message) {

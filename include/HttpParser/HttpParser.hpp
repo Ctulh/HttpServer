@@ -9,17 +9,27 @@
 
 #include "MessageMethods.hpp"
 
+enum MESSAGE_TYPE {
+    NONE = 1,
+    RESPONSE = 2,
+    REQUEST = 3
+};
+
+
 class HttpParser {
 public:
     HttpParser(std::string_view message);
 
 public:
-    MESSAGE_METHOD getMessageMethod();
+    MESSAGE_TYPE getMessageType() const;
+    MESSAGE_METHOD getMessageMethod() const;
+    std::string getMessage() const;
 
 private:
-    MESSAGE_METHOD getMethodFromName(std::string_view message);
+    static MESSAGE_METHOD getMethodFromName(std::string_view message) ;
+    bool isPath(std::string_view message);
 
 private:
     std::string m_message;
-    bool m_isRequest;
+    MESSAGE_METHOD m_method;
 };
