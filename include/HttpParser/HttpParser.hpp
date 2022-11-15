@@ -7,11 +7,19 @@
 #include <string_view>
 #include <memory>
 
-#include "Methods/IMethod.hpp"
+#include "MessageMethods.hpp"
 
 class HttpParser {
 public:
     HttpParser(std::string_view message);
+
+public:
+    MESSAGE_METHOD getMessageMethod();
+
 private:
-    std::unique_ptr<IMethod> m_method;
+    MESSAGE_METHOD getMethodFromName(std::string_view message);
+
+private:
+    std::string m_message;
+    bool m_isRequest;
 };

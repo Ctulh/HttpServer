@@ -15,4 +15,5 @@ public:
 
 private:
     static MESSAGE_METHOD getMessageMethod(std::string_view message);
+    static MESSAGE_METHOD getMethodFromName(std::string_view message);
 };
