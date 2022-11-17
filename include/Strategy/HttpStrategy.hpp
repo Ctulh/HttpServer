@@ -6,15 +6,12 @@
 
 #include "TcpConnection.hpp"
 #include "SocketReader.hpp"
-
-enum REQUEST_TYPE {
-    GET = 1
-};
+#include "Inet/callbacks.hpp"
 
 class HttpStrategy {
 public:
     void onReceiveMessage(TcpConnectionPtr const& connection, SocketReaderPtr socketReader);
+    void setCloseConnection(CloseConnectionCallback);
 private:
-    REQUEST_TYPE getRequestType(std::string const& request) const;
-    std::string getRequest(std::string const& request) const;
+    CloseConnectionCallback m_closeCallback;
 };

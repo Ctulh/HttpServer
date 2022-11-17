@@ -4,6 +4,7 @@
 #include <thread>
 #include "ConnectionAcceptor.hpp"
 #include "Strategy/EchoStrategy.hpp"
+#include "Strategy/HttpStrategy.hpp"
 
 namespace po = boost::program_options;
 
@@ -39,7 +40,7 @@ int main(int argc, char** argv) {
         std::cout << vm["port"].as<std::string>() << '\n';
     }
 
-    TcpServer<EchoStrategy> tcpServer({"127.0.0.1", 8885}, print);
+    TcpServer<HttpStrategy> tcpServer({"127.0.0.1", 8888}, print);
 
     std::thread t1([&tcpServer](){
         std::this_thread::sleep_for(std::chrono::seconds(120));

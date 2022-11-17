@@ -10,5 +10,9 @@ set(SOURCES EchoStrategy.cpp
 
 add_library(${LIB_NAME} ${HEADERS} ${SOURCES})
 
-target_include_directories(${LIB_NAME} PUBLIC ${INCLUDE_PATH} ${PROJECT_SOURCE_DIR}/include/Inet ${CONAN_INCLUDE_DIRS_BOOST})
+target_include_directories(${LIB_NAME} PUBLIC ${INCLUDE_PATH}
+                                              ${PROJECT_SOURCE_DIR}/include/Inet
+                                              ${PROJECT_SOURCE_DIR}/include/
+                                              ${CONAN_INCLUDE_DIRS_BOOST}
+                                                )
 

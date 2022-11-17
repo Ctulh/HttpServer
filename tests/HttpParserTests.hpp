@@ -21,5 +21,6 @@ TEST(HttpParser, GetMethodTest) {
 
     ASSERT_EQ(httpRequest.getMethod(), MESSAGE_METHOD::GET);
     ASSERT_EQ(httpRequest.getPath(), "/test/test.html");
+    ASSERT_EQ(httpRequest.getHost(), "developer.mozilla.org");
 }
 

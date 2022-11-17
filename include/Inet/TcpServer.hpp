@@ -27,6 +27,7 @@ public:
         m_connectionAcceptor = std::make_unique<ConnectionAcceptor>(m_inetAddress);
         m_connectionAcceptor->setReceiveConnectionCallback(std::bind(&TcpServer::acceptConnectionCallback, this, std::placeholders::_1));
         m_dispatcherPool = std::make_unique<DispatchersPool>();
+        m_strategy.setCloseConnection([this](TcpConnectionPtr const& conn) {this->connectionClosed(conn);});
     }
 
     void run() {

@@ -36,3 +36,38 @@ bool HttpRequest::isPath(std::string path) const {
     std::regex pathRegex("^(/[^/ ]*)+/?$");
     return std::regex_match(path, pathRegex);
 }
+
+std::string HttpRequest::getHost() {
+    if(m_host.empty()) {
+        std::string hostString = "Host:";
+        auto it = m_message.find(hostString);
+
+        if(it == std::string::npos) {
+            std::cout << "Host not found \n";
+            return "";
+        }
+
+        it += hostString.size();
+        std::size_t hostEndIndex = 0;
+
+        for(auto i = it; i < m_message.size(); i++) {
+            auto symbol = m_message[i];
+            if(symbol == '\n') {
+                hostEndIndex = i;
+                break;
+            }
+        }
+
+        if(hostEndIndex == 0) {
+            std::cout << "End of the host not found \n";
+            return "";
+        }
+
+        auto hostBeginIndex = it + 1; // Because of space at begin
+        auto length = hostEndIndex - hostBeginIndex;
+
+        m_host = m_message.substr(hostBeginIndex, length);
+        return m_host;
+    }
+    return m_host;
+}

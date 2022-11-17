@@ -10,7 +10,6 @@
 #include "MessageMethods.hpp"
 
 enum MESSAGE_TYPE {
-    NONE = 1,
     RESPONSE = 2,
     REQUEST = 3
 };
