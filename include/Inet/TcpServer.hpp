@@ -40,7 +40,8 @@ public:
             if(m_connections.empty())
                 continue;
 
-            m_dispatcherPool->poll();
+            if(m_isCanPoll.test())
+                m_dispatcherPool->poll();
 
             //TODO callback after range based loop for remove SIGSEGv
         }
@@ -52,16 +53,24 @@ public:
     }
 private:
     void connectionClosed(TcpConnectionPtr const& connection) {
+
+        m_isCanPoll.clear();
+
         std::cout << "Close connection: " << connection->fd() << '\n';
         connection->shutdown();
         m_dispatcherPool->remove(connection);
         m_connections.erase(connection);
+
+        m_isCanPoll.test_and_set();
+
     }
     void acceptConnectionCallback(int fd) {
         auto newConnection = std::make_unique<TcpConnection>(fd);
         if(newConnection) {
             std::cout << "Got new connection: " << fd << '\n';
         }
+
+        m_isCanPoll.clear();
 
         auto insertPos = m_connections.insert(m_connections.end(), std::move(newConnection));
 
@@ -74,11 +83,14 @@ private:
         });
 
         m_dispatcherPool->add(*insertPos, std::move(dispatcher));
+
+        m_isCanPoll.test_and_set();
     }
 
 private:
     Strategy m_strategy;
     std::atomic_flag m_isRunning;
+    std::atomic_flag m_isCanPoll;
     std::unique_ptr<ConnectionAcceptor> m_connectionAcceptor;
     std::unique_ptr<DispatchersPool> m_dispatcherPool;
     std::set<TcpConnectionPtr> m_connections;

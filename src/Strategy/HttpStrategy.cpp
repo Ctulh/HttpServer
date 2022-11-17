@@ -17,7 +17,7 @@ void HttpStrategy::onReceiveMessage(const TcpConnectionPtr &connection, SocketRe
         HttpGetPerformer httpGetPerformer(HttpRequest(socketReader->getBuffer(), GET));
         auto response = httpGetPerformer.getResponse();
         connection->send(response.c_str(), response.size());
-        m_closeCallback(connection);
+      //  m_closeCallback(connection);
     }
 }
 

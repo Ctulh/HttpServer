@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
         std::cout << vm["port"].as<std::string>() << '\n';
     }
 
-    TcpServer<HttpStrategy> tcpServer({"127.0.0.1", 8888}, print);
+    TcpServer<HttpStrategy> tcpServer({"127.0.0.1", 8887    }, print);
 
     std::thread t1([&tcpServer](){
         std::this_thread::sleep_for(std::chrono::seconds(120));

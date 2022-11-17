@@ -17,13 +17,15 @@ void DispatchersPool::remove(TcpConnectionPtr const& connection) {
         return el->getConnectionPtr() == connection;
     });
     if(it != m_dispatchers.end())
-        m_dispatchers.erase(it);
+        m_iterator = m_dispatchers.erase(it);
 
 }
 
 void DispatchersPool::poll() {
-    for(auto it = m_dispatchers.begin(); it != m_dispatchers.end(); it++) {
-        auto result =  it->get()->poll();
+    if(m_dispatchers.empty())
+        return;
+    for(m_iterator = m_dispatchers.begin(); m_iterator != m_dispatchers.end(); m_iterator++) {
+        auto result =  m_iterator->get()->poll();
         if(result == READ_STATUS::CONNECTION_CLOSED) {
             if(m_dispatchers.empty())
                 break;

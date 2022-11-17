@@ -29,7 +29,7 @@ public:
                        "Last-Modified: Wed, 22 Jul 2009 19:15:56 GMT\n"
                        "Content-Length: " + std::to_string(resultString.size()) + "\n"
                        "Content-Type: text/html\n"
-                       "Connection: Closed \r\n\r\n" + resultString;
+                       "Connection: Keep-Alive \r\n\r\n" + resultString;
         return returnString;
     }
 private:

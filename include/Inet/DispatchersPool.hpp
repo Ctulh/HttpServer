@@ -20,4 +20,5 @@ public:
     void poll();
 private:
     std::set<DispatcherPtr> m_dispatchers;
+    std::set<DispatcherPtr>::const_iterator m_iterator;
 };
