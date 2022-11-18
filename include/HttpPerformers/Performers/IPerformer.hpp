@@ -6,9 +6,9 @@
 
 #include <string>
 
-class IMethod {
+class IPerformer {
 public:
-    virtual ~IMethod() = default;
+    virtual ~IPerformer() = default;
 
 public:
     virtual std::string getResponse() = 0;

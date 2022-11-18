@@ -17,9 +17,7 @@ int main(int argc, char** argv) {
     po::options_description desc("Allowed options");
     desc.add_options()
             ("help", "produce help message")
-            ("directory", po::value<std::string>(), "http main directory")
-            ("addr", po::value<std::string>(), "http server address")
-            ("port", po::value<std::string>(), "http server port");
+            ("directory", po::value<std::string>(), "http main directory");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -30,17 +28,18 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    std::string directory;
+
     if(vm.count("directory")) {
         std::cout << vm["directory"].as<std::string>() << '\n';
-    }
-    if(vm.count("addr")) {
-        std::cout << vm["addr"].as<std::string>() << '\n';
-    }
-    if(vm.count("port")) {
-        std::cout << vm["port"].as<std::string>() << '\n';
+        directory = vm["directory"].as<std::string>();
     }
 
-    TcpServer<HttpStrategy> tcpServer({"127.0.0.1", 8887    }, print);
+    if(directory.empty()) {
+        return 1;
+    }
+
+    TcpServer tcpServer({"127.0.0.1", 8888}, HttpStrategy(directory));
 
     std::thread t1([&tcpServer](){
         std::this_thread::sleep_for(std::chrono::seconds(120));

@@ -11,19 +11,20 @@
 #include "DispatchersPool.hpp"
 #include "Generator.hpp"
 #include "callbacks.hpp"
+#include "Strategy/HttpStrategy.hpp"
 
 #include <iostream>
 #include <atomic>
 #include <functional>
 #include <thread>
 #include <set>
+#include <utility>
 
 
-template<typename Strategy>
 class TcpServer {
 public:
-    TcpServer(const InetAddress& inet, std::function<std::string(std::string const&)> const& callback):
-                                  m_inetAddress(inet), m_callback(callback) {
+    TcpServer(const InetAddress& inet, HttpStrategy strategy):
+                                  m_inetAddress(inet), m_strategy(std::move(strategy)) {
         m_connectionAcceptor = std::make_unique<ConnectionAcceptor>(m_inetAddress);
         m_connectionAcceptor->setReceiveConnectionCallback(std::bind(&TcpServer::acceptConnectionCallback, this, std::placeholders::_1));
         m_dispatcherPool = std::make_unique<DispatchersPool>();
@@ -88,12 +89,11 @@ private:
     }
 
 private:
-    Strategy m_strategy;
+    HttpStrategy m_strategy;
     std::atomic_flag m_isRunning;
     std::atomic_flag m_isCanPoll;
     std::unique_ptr<ConnectionAcceptor> m_connectionAcceptor;
     std::unique_ptr<DispatchersPool> m_dispatcherPool;
     std::set<TcpConnectionPtr> m_connections;
     InetAddress m_inetAddress;
-    std::function<std::string(std::string const&)> m_callback;
 };
