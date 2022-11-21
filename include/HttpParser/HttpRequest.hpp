@@ -21,6 +21,7 @@ public:
     MESSAGE_METHOD getMethod() const;
     std::string getPath();
     std::string getHost();
+    bool isKeepAlive() const;
     //HttpVersion getHttpVersion();
 
 private:

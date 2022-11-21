@@ -5,6 +5,11 @@
 #include "TcpConnection.hpp"
 #include <iostream>
 
+TcpConnection::TcpConnection(std::unique_ptr<Socket> socket) {
+    m_socket = std::move(socket);
+    m_connected = true;
+}
+
 TcpConnection::~TcpConnection() {
     shutdown();
 }

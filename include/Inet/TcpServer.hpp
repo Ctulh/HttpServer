@@ -37,7 +37,7 @@ public:
         std::thread t1 ([this](){m_connectionAcceptor->run();});
         t1.detach();
 
-        while(m_isRunning.test()) {
+            while(m_isRunning.test()) {
             if(m_connections.empty())
                 continue;
 
@@ -66,7 +66,7 @@ private:
 
     }
     void acceptConnectionCallback(int fd) {
-        auto newConnection = std::make_unique<TcpConnection>(fd);
+        auto newConnection = std::make_unique<TcpConnection>(std::make_unique<Socket>(fd, true));
         if(newConnection) {
             std::cout << "Got new connection: " << fd << '\n';
         }

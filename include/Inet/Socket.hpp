@@ -14,9 +14,7 @@ enum SOCK_TYPE {
 
 class Socket {
 public:
-    explicit Socket(int fd) {
-        m_socketFd = fd;
-    }
+    explicit Socket(int fd, bool isNonBlocking = false);
 
     explicit Socket(const InetAddress& inetAddress, SOCK_TYPE sockType)
     {

@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
     TcpServer tcpServer({"127.0.0.1", 8888}, HttpStrategy(directory));
 
     std::thread t1([&tcpServer](){
-        std::this_thread::sleep_for(std::chrono::seconds(120));
+        std::this_thread::sleep_for(std::chrono::seconds(300));
         tcpServer.stop();
     });
     t1.detach();

@@ -71,3 +71,23 @@ std::string HttpRequest::getHost() {
     }
     return m_host;
 }
+
+bool HttpRequest::isKeepAlive() const {
+    if(m_message.empty())
+        return false;
+
+    std::string keepAliveFieldString = "Connection:";
+    auto it = m_message.find(keepAliveFieldString);
+
+    if(it == std::string::npos)
+        return false;
+
+    auto begin = it + keepAliveFieldString.size() + 1; // because of empty space
+    auto end = m_message.substr(begin, m_message.size()).find('\n');
+
+    auto keepAliveString = m_message.substr(begin, end);
+
+    if(keepAliveString == "keep-alive")
+        return true;
+    return false;
+}

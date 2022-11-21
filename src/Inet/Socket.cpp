@@ -4,6 +4,21 @@
 
 #include "Socket.hpp"
 #include <string>
+#include <sys/fcntl.h>
+
+Socket::Socket(int fd, bool isNonBlocking) {
+    m_socketFd = fd;
+
+    int flags = ::fcntl(m_socketFd, F_GETFD, 0);
+    flags |= FD_CLOEXEC;
+    ::fcntl(m_socketFd, F_SETFD, flags);
+
+    if(isNonBlocking) {
+        flags = ::fcntl(m_socketFd, F_GETFL, 0);
+        flags |= O_NONBLOCK;
+        ::fcntl(m_socketFd, F_SETFL, flags);
+    }
+}
 
 Socket::~Socket() {
     shutdown(m_socketFd, 2);

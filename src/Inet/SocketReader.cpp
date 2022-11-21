@@ -6,6 +6,7 @@
 
 #include <future>
 #include <sys/socket.h>
+#include <iostream>
 
 namespace {
     constexpr int BUFFER_SIZE = 1024;
@@ -15,6 +16,7 @@ READ_STATUS SocketReader::read(int fd) {
     int result;
     for(;;) {
         char buf[BUFFER_SIZE];
+        std::this_thread::sleep_for(std::chrono::milliseconds(20)); //TODO fix
         result = ::recv(fd, buf, BUFFER_SIZE, 0);
         if(result == BUFFER_SIZE) {
             m_buffer += buf;
@@ -30,10 +32,11 @@ READ_STATUS SocketReader::read(int fd) {
             break;
         }
     }
+
+    std::cout << result << '\n';
+
     if(!m_buffer.empty())
         return ::GOT_MESSAGE;
-    if(result == 0)
-        return ::CONNECTION_CLOSED;
     return ::EMPTY_MESSAGE;
 }
 
