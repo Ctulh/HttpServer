@@ -12,7 +12,7 @@ class HttpStrategy {
 public:
     HttpStrategy(std::string_view directory);
 public:
-    void onReceiveMessage(TcpConnectionPtr const& connection, SocketReaderPtr socketReader);
+    void onReceiveMessage(TcpConnectionPtr connection, SocketReaderPtr);
     void setCloseConnection(CloseConnectionCallback);
 private:
     CloseConnectionCallback m_closeCallback;

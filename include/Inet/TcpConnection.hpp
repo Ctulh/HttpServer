@@ -14,7 +14,7 @@ class TcpConnection {
 public:
     TcpConnection(InetAddress const& inetAddress);
     TcpConnection(int fd);
-    TcpConnection(std::unique_ptr<Socket> socket);
+    TcpConnection(std::shared_ptr<Socket> socket);
     ~TcpConnection();
 public:
     void send(const char* msg, std::size_t len);
@@ -27,5 +27,5 @@ public:
 public:
 private:
     bool m_connected;
-    std::unique_ptr<Socket> m_socket;
+    std::shared_ptr<Socket> m_socket;
 };

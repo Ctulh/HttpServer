@@ -4,15 +4,14 @@
 
 #include "TcpConnection.hpp"
 #include <iostream>
+#include <unistd.h>
 
-TcpConnection::TcpConnection(std::unique_ptr<Socket> socket) {
+TcpConnection::TcpConnection(std::shared_ptr<Socket> socket) {
     m_socket = std::move(socket);
     m_connected = true;
 }
 
-TcpConnection::~TcpConnection() {
-    shutdown();
-}
+TcpConnection::~TcpConnection() {}
 
 TcpConnection::TcpConnection(int fd) {
     m_socket = std::make_unique<Socket>(fd);
@@ -20,7 +19,7 @@ TcpConnection::TcpConnection(int fd) {
 }
 
 void TcpConnection::send(const char *msg, std::size_t len) {
-    auto result = ::send(m_socket->fd(), msg, len, 0);
+    auto result = write(m_socket->fd(), msg, len);
     std::cout << "Result: " << result << '\n';
 }
 

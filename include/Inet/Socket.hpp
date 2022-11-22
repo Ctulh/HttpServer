@@ -27,7 +27,7 @@ public:
 
 public:
     bool bind();
-    bool listen();
+    int listen();
     int accept();
 
     int fd() const;
