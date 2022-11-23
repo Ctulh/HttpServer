@@ -7,9 +7,8 @@
 #include "InetAddress.hpp"
 #include "TcpConnection.hpp"
 #include "ConnectionAcceptor.hpp"
-#include "SocketReader.hpp"
+#include "SocketReader/SocketReader.hpp"
 #include "SocketPoller.hpp"
-#include "Generator.hpp"
 #include "callbacks.hpp"
 #include "Strategy/HttpStrategy.hpp"
 
@@ -29,7 +28,7 @@ public:
         m_socketPoller = std::make_unique<SocketPoller>(10, 100);
         m_socketPoller->setReceiveMessageCallback([this](TcpConnectionPtr connection, SocketReaderPtr socketReader){this->m_strategy.onReceiveMessage(connection, socketReader);});
         m_socketPoller->setCloseConnectionCallback([this](TcpConnectionPtr connection){this->connectionClosed(connection);});
-        //m_strategy.setCloseConnection([this](TcpConnectionPtr const& conn) {this->connectionClosed(conn);});
+        m_strategy.setCloseConnection([this](TcpConnectionPtr const& conn) {this->connectionClosed(conn);});
     }
 
     void run() {
@@ -64,7 +63,7 @@ private:
 
     }
     void acceptConnectionCallback(int fd) {
-        auto newConnection = std::make_shared<TcpConnection>(std::make_shared<Socket>(fd, true));
+        auto newConnection = std::make_shared<TcpConnection>(std::make_shared<Socket>(fd));
         if(newConnection) {
             std::cout << "Got new connection: " << fd << '\n';
         }

@@ -18,10 +18,11 @@ void HttpStrategy::onReceiveMessage(TcpConnectionPtr connection, SocketReaderPtr
     auto performer = PerformerCreator::getMethod(HttpRequest(socketReader->getBuffer(), httpParser.getMessageMethod()), m_directory);
     std::string response = performer->getResponse();
     connection->send(response.c_str(), response.size());
+    m_closeConnectionCallback(connection);
 }
 
 void HttpStrategy::setCloseConnection(CloseConnectionCallback callback) {
-    m_closeCallback = callback;
+    m_closeConnectionCallback = callback;
 }
 
 

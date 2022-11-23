@@ -2,7 +2,6 @@
 // Created by egor on 11/2/22.
 //
 
-#include "SocketReader.hpp"
 
 #include <future>
 #include <sys/socket.h>
@@ -10,6 +9,8 @@
 #include <errno.h>
 #include <cstring>
 #include <unistd.h>
+
+#include "SocketReader.hpp"
 
 namespace {
     constexpr int BUFFER_SIZE = 1024;

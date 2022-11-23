@@ -3,10 +3,10 @@
 //
 
 #include "SocketPoller.hpp"
-#include "SocketReader.hpp"
-#include "Generator.hpp"
+#include "SocketReader/SocketReader.hpp"
 
 #include <sys/epoll.h>
+#include <iostream>
 
 
 SocketPoller::SocketPoller(int maxConnections, int timeout): m_maxConnections(maxConnections),
@@ -42,7 +42,6 @@ void SocketPoller::poll() {
             if(result == READ_STATUS::GOT_MESSAGE)
                 m_receiveMessageCallback(m_connections.at(m_epollEvents[i].data.fd), socketReader);
         }
-        m_closeConnectionCallback(m_connections.at(m_epollEvents[i].data.fd));
     }
 }
 

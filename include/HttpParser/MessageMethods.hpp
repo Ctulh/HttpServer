@@ -4,7 +4,7 @@
 
 #pragma once
 
-enum MESSAGE_METHOD {
+enum class MESSAGE_METHOD {
     UNDEFINED = 0,
     GET = 1,
     HEAD = 2,
@@ -12,7 +12,5 @@ enum MESSAGE_METHOD {
     PUT = 4,
     DELETE = 5,
     CONNECT = 6,
-    OPTIONS = 7,
-    TRACE = 8,
-    PATCH = 9
+    OPTIONS = 7
 };

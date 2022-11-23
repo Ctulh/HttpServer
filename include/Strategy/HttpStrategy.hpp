@@ -5,7 +5,7 @@
 #pragma once
 
 #include "TcpConnection.hpp"
-#include "SocketReader.hpp"
+#include "SocketReader/SocketReader.hpp"
 #include "Inet/callbacks.hpp"
 
 class HttpStrategy {
@@ -15,6 +15,6 @@ public:
     void onReceiveMessage(TcpConnectionPtr connection, SocketReaderPtr);
     void setCloseConnection(CloseConnectionCallback);
 private:
-    CloseConnectionCallback m_closeCallback;
+    CloseConnectionCallback m_closeConnectionCallback;
     std::string m_directory;
 };
