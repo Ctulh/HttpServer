@@ -11,3 +11,5 @@ add_library(${LIB_NAME} ${HEADERS} ${SOURCES})
 
 target_include_directories(${LIB_NAME} PUBLIC ${INCLUDE_PATH}
                                               ${PROJECT_SOURCE_DIR}/include)
+
+target_link_libraries(${LIB_NAME} PRIVATE HttpParserLib)

@@ -5,12 +5,11 @@
 #pragma once
 
 #include <string>
-#include <future>
+#include <memory>
 
 enum READ_STATUS {
-    NONE,
-    GOT_MESSAGE,
-    EMPTY_MESSAGE,
+    GOT_MESSAGE = 1,
+    EMPTY_MESSAGE = 2,
     CONNECTION_CLOSED = -1,
 };
 

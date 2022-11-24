@@ -2,11 +2,15 @@
 // Created by egor on 11/2/22.
 //
 
-#include "SocketReader.hpp"
 
 #include <future>
 #include <sys/socket.h>
 #include <iostream>
+#include <errno.h>
+#include <cstring>
+#include <unistd.h>
+
+#include "SocketReader.hpp"
 
 namespace {
     constexpr int BUFFER_SIZE = 1024;
@@ -16,15 +20,15 @@ READ_STATUS SocketReader::read(int fd) {
     int result;
     for(;;) {
         char buf[BUFFER_SIZE];
-        std::this_thread::sleep_for(std::chrono::milliseconds(20)); //TODO fix
-        result = ::recv(fd, buf, BUFFER_SIZE, 0);
+        result = ::read(fd, buf, BUFFER_SIZE);
         if(result == BUFFER_SIZE) {
             m_buffer += buf;
             continue;
         }
         else if(result == 0)
-            break;
+            return ::CONNECTION_CLOSED;
         else if(result == -1) {
+            std::cout << std::strerror(errno) << '\n';
             return ::CONNECTION_CLOSED;
         }
         else if(result < BUFFER_SIZE) {

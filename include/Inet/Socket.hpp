@@ -14,7 +14,7 @@ enum SOCK_TYPE {
 
 class Socket {
 public:
-    explicit Socket(int fd, bool isNonBlocking = false);
+    explicit Socket(int fd);
 
     explicit Socket(const InetAddress& inetAddress, SOCK_TYPE sockType)
     {
@@ -27,13 +27,15 @@ public:
 
 public:
     bool bind();
-    bool listen();
+    int listen();
     int accept();
 
     int fd() const;
 
     bool connect();
     bool isConnected() const;
+
+    bool setNonBlocking() const;
 
     void shutDown();
 private:

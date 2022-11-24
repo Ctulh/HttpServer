@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 20)
 include(${PROJECT_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
-add_executable(${APPLICATION_NAME} app/main.cpp)
+add_executable(${APPLICATION_NAME} app/main.cpp include/HttpParser/HttpRequest.hpp include/HttpParser/HttpVersion.hpp include/HttpParser/HttpResponse.hpp)
 
 add_subdirectory(src)
 

@@ -6,7 +6,6 @@
 #include "StringsFunctions.hpp"
 
 HttpParser::HttpParser(std::string_view message): m_message(message) {
-
     std::string accumulator;
     for(int i = 0; i < m_message.size() - 1; ++i) {
         accumulator += m_message[i];
@@ -15,14 +14,18 @@ HttpParser::HttpParser(std::string_view message): m_message(message) {
                 m_method = getMethodFromName(accumulator);
                 break;
             }
+            else {
+                m_method = MESSAGE_METHOD::UNDEFINED;
+                break;
+            }
         }
     }
 }
 
 
 MESSAGE_TYPE HttpParser::getMessageType() const {
-    auto type = getMessageMethod();
-    if(type == UNDEFINED)
+    MESSAGE_METHOD messageMethod = getMessageMethod();
+    if(messageMethod == MESSAGE_METHOD::UNDEFINED)
         return MESSAGE_TYPE::RESPONSE;
     return MESSAGE_TYPE::REQUEST;
 }

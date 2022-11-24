@@ -5,7 +5,7 @@
 #pragma once
 
 #include "TcpConnection.hpp"
-#include "SocketReader.hpp"
+#include "SocketReader/SocketReader.hpp"
 
 class EchoStrategy {
 public:

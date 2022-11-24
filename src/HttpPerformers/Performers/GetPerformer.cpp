@@ -3,15 +3,18 @@
 //
 
 #include "Performers/GetPerformer.hpp"
+#include "HttpParser/HttpResponseBuilder.hpp"
 
 #include <filesystem>
 #include <fstream>
+#include <map>
 
-GetPerformer::GetPerformer(const HttpRequest &request, std::string_view projectPath): m_httpRequest(request),
-                                                                                      m_projectPath(projectPath) {}
+GetPerformer::GetPerformer(const HttpRequestParser &request, std::string_view projectPath): m_httpRequest(request),
+                                                                                            m_projectPath(projectPath) {}
 
 std::string GetPerformer::getResponse() {
     std::string filepath;
+    HttpResponseBuilder responseBuilder;
 
     if(m_httpRequest.getPath() == "/")
         filepath = m_projectPath + "/index.html";
@@ -26,13 +29,15 @@ std::string GetPerformer::getResponse() {
     std::string resultString((std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
     file.close();
 
-    std::string returnString;
-    returnString = "HTTP/1.1 200 OK\n"
-                   "Date: Mon, 27 Jul 2009 12:28:53 GMT\n"
-                   "Server: Apache/2.2.14 (Win32)\n"
-                   "Last-Modified: Wed, 22 Jul 2009 19:15:56 GMT\n"
-                   "Content-Length: " + std::to_string(resultString.size()) + "\n"
-                   "Content-Type: text/html\n"
-                   "Connection: Keep-Alive \r\n\r\n" + resultString;
-    return returnString;
+    responseBuilder.setHttpVersion({1,1}); // TODO
+    responseBuilder.setStatusCode(200);
+    responseBuilder.setCurrentDateTime();
+    responseBuilder.setServer("OwnHttpServer");
+
+    responseBuilder.setLastModifiedDateTime("Wed, 22 Jul 2009 19:15:56 GMT");
+    responseBuilder.setContentTypeFromFilename(filepath);
+    responseBuilder.setConnectionStatus("close");
+    responseBuilder.setBody(resultString);
+
+    return responseBuilder.getResult();
 }

@@ -16,4 +16,4 @@ target_include_directories(${LIB_NAME} PUBLIC ${INCLUDE_PATH}
                                               ${CONAN_INCLUDE_DIRS_BOOST}
                                                 )
 
-target_link_libraries(${LIB_NAME} PRIVATE HttpPerformersLib)
+target_link_libraries(${LIB_NAME} PRIVATE HttpPerformersLib InetLib SocketReaderLib)

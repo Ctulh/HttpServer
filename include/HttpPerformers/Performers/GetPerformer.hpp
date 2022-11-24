@@ -5,15 +5,15 @@
 #pragma once
 
 #include "IPerformer.hpp"
-#include "HttpParser/HttpRequest.hpp"
+#include "HttpParser/HttpRequestParser.hpp"
 
 class GetPerformer: public IPerformer {
 public:
-    GetPerformer(HttpRequest const& request, std::string_view projectPath);
+    GetPerformer(HttpRequestParser const& request, std::string_view projectPath);
 public:
     std::string getResponse() override;
 
 private:
     std::string m_projectPath;
-    HttpRequest m_httpRequest;
+    HttpRequestParser m_httpRequest;
 };

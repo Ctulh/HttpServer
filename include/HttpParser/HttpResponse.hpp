@@ -1,9 +1,23 @@
 //
-// Created by egor on 11/15/22.
+// Created by ctuh on 11/24/22.
 //
 
 #pragma once
 
-class HttpResponse {
+#include <string>
 
+#include "HttpVersion.hpp"
+
+struct HttpResponse {
+    HttpResponse() = default;
+    HttpResponse(HttpResponse const&) = default;
+public:
+    HttpVersion version;
+    int statusCode;
+    std::string dateTime;
+    std::string server;
+    std::string contentType;
+    std::string connection;
+    std::string body;
+    std::string lastModified;
 };

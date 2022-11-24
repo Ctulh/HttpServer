@@ -9,9 +9,9 @@
 
 #include "MessageMethods.hpp"
 
-enum MESSAGE_TYPE {
-    RESPONSE = 2,
-    REQUEST = 3
+enum class MESSAGE_TYPE {
+    RESPONSE = 1,
+    REQUEST = 2,
 };
 
 

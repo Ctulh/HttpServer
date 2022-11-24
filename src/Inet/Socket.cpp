@@ -6,22 +6,12 @@
 #include <string>
 #include <sys/fcntl.h>
 
-Socket::Socket(int fd, bool isNonBlocking) {
+Socket::Socket(int fd) {
     m_socketFd = fd;
-
-    int flags = ::fcntl(m_socketFd, F_GETFD, 0);
-    flags |= FD_CLOEXEC;
-    ::fcntl(m_socketFd, F_SETFD, flags);
-
-    if(isNonBlocking) {
-        flags = ::fcntl(m_socketFd, F_GETFL, 0);
-        flags |= O_NONBLOCK;
-        ::fcntl(m_socketFd, F_SETFL, flags);
-    }
 }
 
 Socket::~Socket() {
-    shutdown(m_socketFd, 2);
+    close(m_socketFd);
 }
 
 int Socket::accept() {
@@ -29,12 +19,8 @@ int Socket::accept() {
     return ::accept ( m_socketFd, (sockaddr*)m_inetAddress->getSockAddr(), &addrLength);
 }
 
-bool Socket::listen() {
-    int listen_return = ::listen(m_socketFd, SOMAXCONN);
-    if (listen_return == -1) {
-        return false;
-    }
-    return true;
+int Socket::listen() {
+    return ::listen(m_socketFd, SOMAXCONN);
 }
 
 bool Socket::bind() {
@@ -67,4 +53,10 @@ bool Socket::isConnected() const {
 void Socket::shutDown() {
     shutdown(m_socketFd, 2);
     m_isConnected = false;
+}
+
+bool Socket::setNonBlocking() const {
+    int flags = fcntl(m_socketFd, F_GETFL);
+    auto result = fcntl(m_socketFd, F_SETFL,flags | O_NONBLOCK);
+    return (result != -1);
 }

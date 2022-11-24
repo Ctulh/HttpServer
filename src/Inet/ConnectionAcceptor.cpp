@@ -16,16 +16,25 @@ void ConnectionAcceptor::setReceiveConnectionCallback(ReceiveConnectionCallback 
 }
 
 void ConnectionAcceptor::run() {
-    m_socket->listen();
+    m_listenFd = m_socket->listen();
 
     while(m_isRunning.test()) {
         int newConnectionFd = m_socket->accept();
         if(newConnectionFd != -1) {
-            m_receiveConnectionCallback(newConnectionFd);
+            if(m_receiveConnectionCallback)
+                m_receiveConnectionCallback(newConnectionFd);
         }
     }
 }
 
 void ConnectionAcceptor::stop() {
     m_isRunning.clear();
+}
+
+int ConnectionAcceptor::fd() const {
+    return m_socket->fd();
+}
+
+int ConnectionAcceptor::listenFd() const {
+    return m_listenFd;
 }
