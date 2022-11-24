@@ -7,10 +7,10 @@
 #include <memory>
 #include <optional>
 
-#include "HttpParser/HttpRequest.hpp"
+#include "HttpParser/HttpRequestParser.hpp"
 #include "Performers//IPerformer.hpp"
 
 class PerformerCreator {
 public:
-    static std::unique_ptr<IPerformer> getMethod(HttpRequest const&, std::string_view path);
+    static std::unique_ptr<IPerformer> getMethod(HttpRequestParser const&, std::string_view path);
 };

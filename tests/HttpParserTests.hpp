@@ -5,7 +5,7 @@
 #pragma once
 
 #include "HttpParser.hpp"
-#include "HttpRequest.hpp"
+#include "HttpRequestParser.hpp"
 #include <gtest/gtest.h>
 
 TEST(HttpParser, GetMethodTest) {
@@ -13,7 +13,7 @@ TEST(HttpParser, GetMethodTest) {
                                     "Host: developer.mozilla.org\n"
                                     "Accept-Language: fr\n"
                                     "Connection: keep-alive\n";
-    HttpParser httpParser(message);
+    HttpParserBuilder httpParser(message);
     ASSERT_EQ(httpParser.getMessageType(), MESSAGE_TYPE::REQUEST);
     ASSERT_EQ(httpParser.getMessageMethod(), MESSAGE_METHOD::GET);
     ASSERT_EQ(httpParser.getMessage(), message);
@@ -24,7 +24,7 @@ TEST(HttpParser, HeadMethodTest) {
                                     "Host: developer.mozilla.org\n"
                                     "Accept-Language: fr\n"
                                     "Connection: keep-alive\n";
-    HttpParser httpParser(message);
+    HttpParserBuilder httpParser(message);
     ASSERT_EQ(httpParser.getMessageType(), MESSAGE_TYPE::REQUEST);
     ASSERT_EQ(httpParser.getMessageMethod(), MESSAGE_METHOD::HEAD);
 }
@@ -34,7 +34,7 @@ TEST(HttpParser, PostMethodTest) {
                                     "Host: developer.mozilla.org\n"
                                     "Accept-Language: fr\n"
                                     "Connection: keep-alive\n";
-    HttpParser httpParser(message);
+    HttpParserBuilder httpParser(message);
     ASSERT_EQ(httpParser.getMessageType(), MESSAGE_TYPE::REQUEST);
     ASSERT_EQ(httpParser.getMessageMethod(), MESSAGE_METHOD::POST);
 }
@@ -44,7 +44,7 @@ TEST(HttpParser, PutMethodTest) {
                                     "Host: developer.mozilla.org\n"
                                     "Accept-Language: fr\n"
                                     "Connection: keep-alive\n";
-    HttpParser httpParser(message);
+    HttpParserBuilder httpParser(message);
     ASSERT_EQ(httpParser.getMessageType(), MESSAGE_TYPE::REQUEST);
     ASSERT_EQ(httpParser.getMessageMethod(), MESSAGE_METHOD::PUT);
 }
@@ -54,7 +54,7 @@ TEST(HttpParser, DeleteMethodTest) {
                                     "Host: developer.mozilla.org\n"
                                     "Accept-Language: fr\n"
                                     "Connection: keep-alive\n";
-    HttpParser httpParser(message);
+    HttpParserBuilder httpParser(message);
     ASSERT_EQ(httpParser.getMessageType(), MESSAGE_TYPE::REQUEST);
     ASSERT_EQ(httpParser.getMessageMethod(), MESSAGE_METHOD::DELETE);
 }
@@ -64,7 +64,7 @@ TEST(HttpParser, ConnectMethodTest) {
                                     "Host: developer.mozilla.org\n"
                                     "Accept-Language: fr\n"
                                     "Connection: keep-alive\n";
-    HttpParser httpParser(message);
+    HttpParserBuilder httpParser(message);
     ASSERT_EQ(httpParser.getMessageType(), MESSAGE_TYPE::REQUEST);
     ASSERT_EQ(httpParser.getMessageMethod(), MESSAGE_METHOD::CONNECT);
 }
@@ -74,7 +74,7 @@ TEST(HttpParser, OptionsMethodTest) {
                                     "Host: developer.mozilla.org\n"
                                     "Accept-Language: fr\n"
                                     "Connection: keep-alive\n";
-    HttpParser httpParser(message);
+    HttpParserBuilder httpParser(message);
     ASSERT_EQ(httpParser.getMessageType(), MESSAGE_TYPE::REQUEST);
     ASSERT_EQ(httpParser.getMessageMethod(), MESSAGE_METHOD::OPTIONS);
 }
@@ -87,12 +87,12 @@ TEST(HttpParser, ResponseMessageTest) {
                                     "Content-Length: 88\n"
                                     "Content-Type: text/html\n"
                                     "Connection: Closed";
-    HttpParser httpParser(message);
+    HttpParserBuilder httpParser(message);
     ASSERT_EQ(httpParser.getMessageType(), MESSAGE_TYPE::RESPONSE);
     ASSERT_EQ(httpParser.getMessageMethod(), MESSAGE_METHOD::UNDEFINED);
     ASSERT_EQ(httpParser.getMessage(), message);
 
-    //HttpRequest httpRequest(message, httpParser.getMessageMethod());
+    //HttpRequestParser httpRequest(message, httpParser.getMessageMethod());
 
     //ASSERT_EQ(httpRequest.getMethod(), MESSAGE_METHOD::UNDEFINED);
     //ASSERT_EQ(httpRequest.getPath(), "/test/test.html");
@@ -105,8 +105,8 @@ TEST(HttpRequest, HttpRequestGetPathTest) {
                                     "Host: developer.mozilla.org\n"
                                     "Accept-Language: fr\n"
                                     "Connection: keep-alive\n";
-    HttpParser httpParser(message);
-    HttpRequest httpRequest(message, httpParser.getMessageMethod());
+    HttpParserBuilder httpParser(message);
+    HttpRequestParser httpRequest(message, httpParser.getMessageMethod());
 
     ASSERT_EQ(httpRequest.getMethod(), MESSAGE_METHOD::GET);
     ASSERT_EQ(httpRequest.getPath(), "/test/test.html");
@@ -117,8 +117,8 @@ TEST(HttpRequest, HttpRequestGetHostTest) {
                                     "Host: developer.mozilla.org\n"
                                     "Accept-Language: fr\n"
                                     "Connection: keep-alive\n";
-    HttpParser httpParser(message);
-    HttpRequest httpRequest(message, httpParser.getMessageMethod());
+    HttpParserBuilder httpParser(message);
+    HttpRequestParser httpRequest(message, httpParser.getMessageMethod());
 
     ASSERT_EQ(httpRequest.getHost(), "developer.mozilla.org");
 }
@@ -128,8 +128,8 @@ TEST(HttpRequest, HttpRequestConnectionKeepAliveTest) {
                                     "Host: developer.mozilla.org\n"
                                     "Accept-Language: fr\n"
                                     "Connection: keep-alive\n";
-    HttpParser httpParser(message);
-    HttpRequest httpRequest(message, httpParser.getMessageMethod());
+    HttpParserBuilder httpParser(message);
+    HttpRequestParser httpRequest(message, httpParser.getMessageMethod());
 
     ASSERT_TRUE(httpRequest.isKeepAlive());
 }
@@ -139,8 +139,8 @@ TEST(HttpRequest, HttpRequestConnectionCloseTest) {
                                     "Host: developer.mozilla.org\n"
                                     "Accept-Language: fr\n"
                                     "Connection: Closed\n";
-    HttpParser httpParser(message);
-    HttpRequest httpRequest(message, httpParser.getMessageMethod());
+    HttpParserBuilder httpParser(message);
+    HttpRequestParser httpRequest(message, httpParser.getMessageMethod());
 
     ASSERT_FALSE(httpRequest.isKeepAlive());
 }

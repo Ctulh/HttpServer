@@ -5,7 +5,7 @@
 #include "HttpParser.hpp"
 #include "StringsFunctions.hpp"
 
-HttpParser::HttpParser(std::string_view message): m_message(message) {
+HttpParserBuilder::HttpParserBuilder(std::string_view message): m_message(message) {
     std::string accumulator;
     for(int i = 0; i < m_message.size() - 1; ++i) {
         accumulator += m_message[i];
@@ -23,22 +23,22 @@ HttpParser::HttpParser(std::string_view message): m_message(message) {
 }
 
 
-MESSAGE_TYPE HttpParser::getMessageType() const {
+MESSAGE_TYPE HttpParserBuilder::getMessageType() const {
     MESSAGE_METHOD messageMethod = getMessageMethod();
     if(messageMethod == MESSAGE_METHOD::UNDEFINED)
         return MESSAGE_TYPE::RESPONSE;
     return MESSAGE_TYPE::REQUEST;
 }
 
-std::string HttpParser::getMessage() const {
+std::string HttpParserBuilder::getMessage() const {
     return m_message;
 }
 
-MESSAGE_METHOD HttpParser::getMessageMethod() const {
+MESSAGE_METHOD HttpParserBuilder::getMessageMethod() const {
     return m_method;
 }
 
-MESSAGE_METHOD HttpParser::getMethodFromName(std::string_view message) {
+MESSAGE_METHOD HttpParserBuilder::getMethodFromName(std::string_view message) {
     switch (const_hash(message.data())) {
         case const_hash("GET"): return MESSAGE_METHOD::GET;
         case const_hash("HEAD"): return MESSAGE_METHOD::HEAD;

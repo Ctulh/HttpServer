@@ -1,5 +1,5 @@
 //
-// Created by egor on 11/15/22.
+// Created by ctuh on 11/24/22.
 //
 
 #pragma once
@@ -13,25 +13,17 @@ struct HttpVersion {
     int minor;
 };
 
-class HttpRequest {
+struct HttpRequest {
 public:
-    HttpRequest(std::string_view message, MESSAGE_METHOD method): m_message(message), m_method(method) {}
-    HttpRequest(HttpRequest const& request): m_message(request.m_message), m_method(request.m_method), m_path(request.m_path), m_host(request.m_host) {}
+    HttpRequest() = default;
+    HttpRequest(HttpRequest const&) = default;
+
 public:
-    MESSAGE_METHOD getMethod() const;
-    std::string getPath();
-    std::string getHost();
-    bool isKeepAlive() const;
-    //HttpVersion getHttpVersion();
-
-private:
-    bool isPath(std::string path) const;
-
-private:
-    HttpVersion m_version;
-    std::string m_message;
-    std::string m_path;
-    std::string m_body;
-    std::string m_host;
-    MESSAGE_METHOD m_method;
+    std::string connection;
+    MESSAGE_METHOD method;
+    HttpVersion version;
+    std::string message;
+    std::string path;
+    std::string body;
+    std::string host;
 };

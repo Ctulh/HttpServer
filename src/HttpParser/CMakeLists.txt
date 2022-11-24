@@ -5,11 +5,12 @@ set(INCLUDE_PATH ${PROJECT_SOURCE_DIR}/include/HttpParser)
 set(STRINGS_METHODS StringsMethodsLib)
 
 set(HEADERS ${INCLUDE_PATH}/HttpParser.hpp
-            ${INCLUDE_PATH}/HttpRequest.hpp
-            ${INCLUDE_PATH}/HttpResponse.hpp
+            ${INCLUDE_PATH}/HttpRequestParser.hpp
+            ${INCLUDE_PATH}/HttpResponseBuilder.hpp
             ${INCLUDE_PATH}/MessageMethods.hpp)
 
-set(SOURCES HttpParser.cpp
+set(SOURCES HttpParserBuilder.cpp
+            HttpRequestParser.cpp
             HttpRequest.cpp)
 
 add_library(${LIB_NAME} ${HEADERS} ${SOURCES})
