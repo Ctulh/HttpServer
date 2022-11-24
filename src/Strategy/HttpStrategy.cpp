@@ -13,7 +13,7 @@
 HttpStrategy::HttpStrategy(std::string_view directory): m_directory(directory) {}
 
 void HttpStrategy::onReceiveMessage(TcpConnectionPtr connection, SocketReaderPtr socketReader) {
-    HttpParserBuilder httpParser(socketReader->getBuffer());
+    HttpParser httpParser(socketReader->getBuffer());
     std::cout << socketReader->getBuffer();
     auto performer = PerformerCreator::getMethod(HttpRequestParser(socketReader->getBuffer(), httpParser.getMessageMethod()), m_directory);
     std::string response = performer->getResponse();

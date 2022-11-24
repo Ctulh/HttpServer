@@ -8,7 +8,7 @@
 
 #include "MessageMethods.hpp"
 #include "HttpRequest.hpp"
-
+#include "HttpVersion.hpp"
 
 
 class HttpRequestParser {

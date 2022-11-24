@@ -7,11 +7,7 @@
 #include <string>
 
 #include "MessageMethods.hpp"
-
-struct HttpVersion {
-    int major;
-    int minor;
-};
+#include "HttpVersion.hpp"
 
 struct HttpRequest {
 public:

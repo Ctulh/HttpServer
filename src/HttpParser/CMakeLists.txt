@@ -9,9 +9,10 @@ set(HEADERS ${INCLUDE_PATH}/HttpParser.hpp
             ${INCLUDE_PATH}/HttpResponseBuilder.hpp
             ${INCLUDE_PATH}/MessageMethods.hpp)
 
-set(SOURCES HttpParserBuilder.cpp
+set(SOURCES HttpParser.cpp
             HttpRequestParser.cpp
-            HttpRequest.cpp)
+            HttpRequest.cpp
+            HttpResponseBuilder.cpp)
 
 add_library(${LIB_NAME} ${HEADERS} ${SOURCES})
 

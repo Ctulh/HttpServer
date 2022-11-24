@@ -15,9 +15,9 @@ enum class MESSAGE_TYPE {
 };
 
 
-class HttpParserBuilder {
+class HttpParser {
 public:
-    HttpParserBuilder(std::string_view message);
+    HttpParser(std::string_view message);
 
 public:
     MESSAGE_TYPE getMessageType() const;
