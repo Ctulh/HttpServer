@@ -31,6 +31,12 @@ public:
         m_strategy.setCloseConnection([this](TcpConnectionPtr const& conn) {this->connectionClosed(conn);});
     }
 
+    ~TcpServer() {
+        for(auto& connection: m_connections) {
+            connection->shutdown();
+        }
+    }
+
     void run() {
         m_isRunning.test_and_set();
 
@@ -42,6 +48,8 @@ public:
             if (m_isCanPoll.test())
                 m_socketPoller->poll();
         }
+
+        m_connectionAcceptor->stop();
     }
 
     void stop() {

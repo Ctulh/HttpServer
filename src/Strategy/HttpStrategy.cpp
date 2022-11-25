@@ -5,16 +5,12 @@
 #include "HttpStrategy.hpp"
 #include "HttpParser/HttpParser.hpp"
 #include "HttpParser/HttpRequestParser.hpp"
-#include "HttpParser/MessageMethods.hpp"
 #include "HttpPerformers/PerformerCreator.hpp"
-
-#include <iostream>
 
 HttpStrategy::HttpStrategy(std::string_view directory): m_directory(directory) {}
 
 void HttpStrategy::onReceiveMessage(TcpConnectionPtr connection, SocketReaderPtr socketReader) {
     HttpParser httpParser(socketReader->getBuffer());
-    std::cout << socketReader->getBuffer();
     auto performer = PerformerCreator::getMethod(HttpRequestParser(socketReader->getBuffer(), httpParser.getMessageMethod()), m_directory);
     std::string response = performer->getResponse();
     connection->send(response.c_str(), response.size());

@@ -20,7 +20,7 @@ TcpConnection::TcpConnection(int fd) {
 
 void TcpConnection::send(const char *msg, std::size_t len) {
     auto result = write(m_socket->fd(), msg, len);
-    std::cout << "Result: " << result << '\n';
+    std::cout << "Sent: " << result << '\n';
 }
 
 TcpConnection::TcpConnection(const InetAddress &inetAddress) {

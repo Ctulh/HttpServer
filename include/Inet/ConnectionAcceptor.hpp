@@ -19,9 +19,8 @@ public:
     void run();
     void stop();
     int fd() const;
-    int listenFd() const;
 private:
-    int m_listenFd = -1;
+    int m_epollFd;
     std::atomic_flag m_isRunning;
     std::unique_ptr<Socket> m_socket;
     ReceiveConnectionCallback m_receiveConnectionCallback;
