@@ -20,7 +20,7 @@ public:
     {
         m_inetAddress = std::make_unique<InetAddress>(inetAddress);
         m_socketFd = socket(AF_INET,
-                            ((sockType == TCP) ? SOCK_STREAM : SOCK_DGRAM) | SOCK_NONBLOCK | SOCK_CLOEXEC,
+                            ((sockType == TCP) ? SOCK_STREAM : SOCK_DGRAM)| SOCK_CLOEXEC,
                           0);
     }
     virtual ~Socket();

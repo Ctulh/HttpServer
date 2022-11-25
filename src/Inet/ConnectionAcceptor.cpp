@@ -3,6 +3,7 @@
 //
 
 #include "ConnectionAcceptor.hpp"
+#include <sys/epoll.h>
 
 ConnectionAcceptor::ConnectionAcceptor(InetAddress const& inetAddress) {
     m_socket = std::make_unique<Socket>(inetAddress, SOCK_TYPE::TCP);
@@ -16,8 +17,7 @@ void ConnectionAcceptor::setReceiveConnectionCallback(ReceiveConnectionCallback 
 }
 
 void ConnectionAcceptor::run() {
-    m_listenFd = m_socket->listen();
-
+    m_socket->listen();
     while(m_isRunning.test()) {
         int newConnectionFd = m_socket->accept();
         if(newConnectionFd != -1) {
@@ -29,12 +29,9 @@ void ConnectionAcceptor::run() {
 
 void ConnectionAcceptor::stop() {
     m_isRunning.clear();
+    m_socket->shutDown();
 }
 
 int ConnectionAcceptor::fd() const {
     return m_socket->fd();
-}
-
-int ConnectionAcceptor::listenFd() const {
-    return m_listenFd;
 }

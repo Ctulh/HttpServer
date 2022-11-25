@@ -1,10 +1,11 @@
 #include <iostream>
 #include <boost/program_options.hpp>
 #include "Inet/TcpServer.hpp"
-#include <thread>
-#include "ConnectionAcceptor.hpp"
-#include "Strategy/EchoStrategy.hpp"
 #include "Strategy/HttpStrategy.hpp"
+#include <thread>
+#include <condition_variable>
+#include <mutex>
+#include <csignal>
 
 namespace po = boost::program_options;
 
@@ -12,6 +13,17 @@ std::string print(std::string const& msg) {
     std::cout << msg;
     return msg;
 }
+
+namespace {
+    std::mutex stopServerMutex;
+    std::condition_variable stopServerCv;
+}
+
+void signalHandler(int signum) {
+    std::cout << "Interrupt signal (" << signum << ") received.\n";
+    stopServerCv.notify_all();
+}
+
 
 int main(int argc, char** argv) {
     po::options_description desc("Allowed options");
@@ -46,10 +58,14 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    std::signal(SIGINT, signalHandler);
+    std::signal(SIGTERM, signalHandler);
+
     TcpServer tcpServer({"127.0.0.1", port}, HttpStrategy(directory));
 
-    std::thread t1([&tcpServer](){
-        std::this_thread::sleep_for(std::chrono::seconds(300));
+    std::thread t1([&](){
+        std::unique_lock<std::mutex> lk(::stopServerMutex);
+        ::stopServerCv.wait(lk);
         tcpServer.stop();
     });
     t1.detach();
