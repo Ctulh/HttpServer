@@ -27,8 +27,6 @@ private:
     std::string pathParse();
     std::string hostParse();
     std::string connectionParse();
-    HttpVersion httpVersionParse();
-    std::string bodyParse();
 
     bool isPath(std::string path) const;
 private:

@@ -127,11 +127,3 @@ bool HttpRequestParser::isPath(std::string path) const {
 bool HttpRequestParser::isKeepAlive() const {
     return (m_request.connection == "Keep-alive") || (m_request.connection == "keep-alive");
 }
-
-std::string HttpRequestParser::bodyParse() {
-
-}
-
-HttpVersion HttpRequestParser::httpVersionParse() {
-
-}
