@@ -9,8 +9,7 @@
 
 ## Demostration
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=MZ4os4_tsgc" target="_blank"><img src="http://img.youtube.com/vi/MZ4os4_tsgc/0.jpg" 
-alt="Video demonstration" width="640" height="330" border="10" /></a>
+[![Video demonstration](http://img.youtube.com/vi/MZ4os4_tsgc/0.jpg)](http://www.youtube.com/watch?v=MZ4os4_tsgc)
 
 ## Installation
 
