@@ -9,11 +9,6 @@
 
 namespace po = boost::program_options;
 
-std::string print(std::string const& msg) {
-    std::cout << msg;
-    return msg;
-}
-
 namespace {
     std::mutex stopServerMutex;
     std::condition_variable stopServerCv;
