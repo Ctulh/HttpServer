@@ -9,7 +9,7 @@
 
 ## Demostration
 
-
+[![Demo CountPages alpha](https://share.gifyoutube.com/KzB6Gb.gif)](https://youtu.be/MZ4os4_tsgc)
 
 ## Installation
 
