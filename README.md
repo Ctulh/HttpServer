@@ -5,6 +5,8 @@
 - [X] Http strategy
 - [ ] REST strategy
 - [ ] Add logging methods
+- [ ] Add more tests
+- [ ] Separate InetLib to submodule
 
 
 ## Demostration
